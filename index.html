@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tic Tac Toe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background-color: #0d0d0d;
+      color: #00ffea;
+      text-align: center;
+      margin: 0;
+      padding: 40px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1, h2 {
+      text-shadow: 0 0 10px #00ffea, 0 0 20px #00ffea;
+      margin-bottom: 20px;
+    }
+
+    .login-screen {
+      max-width: 300px;
+      margin: auto;
+      background: #111;
+      padding: 20px;
+      border: 2px solid #00ffea;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ffea;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .game-container {
+      max-width: 400px;
+      margin: auto;
+      display: none;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      font-size: 2.5em;
+      background-color: #1a1a1a;
+      color: #00ffea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #00ffea;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ffea;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .cell:hover {
+      background-color: #262626;
+      transform: scale(1.05);
+    }
+
+    .cell.winning {
+      animation: pulse 1s infinite;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 1.2em;
+      text-shadow: 0 0 5px #00ffea;
+    }
+
+    .settings, .mode-select {
+      margin-top: 15px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: none;
+      background-color: #00ffea;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #00d1c1;
+      box-shadow: 0 0 10px #00ffea;
+    }
+
+    .volume-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    #volumeSlider {
+      width: 150px;
+      background: linear-gradient(to right, #00ffea calc(var(--value) * 100%), #1a1a1a calc(var(--value) * 100%));
+      border-radius: 5px;
+      cursor: pointer;
+      accent-color: #00ffea;
+      --value: 1;
+    }
+
+    #volumeSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: #00ffea;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #00ffea;
+    }
+
+    #volumeSlider::-moz-range-thumb {
+      width: 15px;
+      height: 15px;
+      background: #00ffea;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #00ffea;
+    }
+
+    .classic-theme #volumeSlider {
+      background: linear-gradient(to right, #000 calc(var(--value) * 100%), #ccc calc(var(--value) * 100%));
+      accent-color: #000;
+    }
+
+    .classic-theme #volumeSlider::-webkit-slider-thumb {
+      background: #000;
+      box-shadow: 0 0 5px #000;
+    }
+
+    .classic-theme #volumeSlider::-moz-range-thumb {
+      background: #000;
+      box-shadow: 0 0 5px #000;
+    }
+
+    .social-media {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.9em;
+    }
+
+    .social-media a {
+      color: #00ffea;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .social-media a:hover {
+      color: #00d1c1;
+      text-shadow: 0 0 10px #00ffea;
+    }
+
+    .classic-theme .social-media a {
+      color: #000;
+    }
+
+    .classic-theme .social-media a:hover {
+      color: #333;
+      text-shadow: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+      }
+
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 10px #00ffea; }
+      50% { transform: scale(1.1); box-shadow: 0 0 20px #00ffea; }
+      100% { transform: scale(1); box-shadow: 0 0 10px #00ffea; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-screen" id="loginScreen">
+    <h2>Enter Your Name</h2>
+    <input type="text" id="username" placeholder="Your Name" required aria-label="Player name input" />
+    <div class="mode-select">
+      <select id="mode" aria-label="Game mode selection">
+        <option value="pvp">Player vs Player</option>
+        <option value="cpu">Player vs CPU</option>
+      </select>
+    </div>
+    <div class="settings">
+      <select id="theme" onchange="changeTheme(this.value)" aria-label="Theme selection">
+        <option value="dark">Dark Theme</option>
+        <option value="classic">Classic Theme</option>
+      </select>
+    </div>
+    <button onclick="startGame()" aria-label="Start game">Start Game</button>
+  </div>
+
+  <div class="game-container" id="gameContainer">
+    <div class="social-media">
+      <i class="fab fa-instagram"></i>
+      <a href="https://www.instagram.com/iamhsepid?igsh=MWx1eDRkZ2RkNnB3Mw==" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram">Follow us on Instagram</a>
+    </div>
+    <h1>Tic Tac Toe</h1>
+    <div class="board" id="board" role="grid"></div>
+    <div class="status" id="status">Player X's turn</div>
+    <button onclick="restartGame()" aria-label="Restart game">Restart Game</button>
+    <button onclick="toggleThemeSong()" aria-label="Toggle theme song">Toggle Theme Song</button>
+    <div class="volume-control" id="volumeControl">
+      <label for="volumeSlider" style="font-size: 0.9em; margin-right: 10px;">Theme Song Volume:</label>
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1" aria-label="Theme song volume control" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+    </div>
+  </div>
+
+  <audio id="themeSong" src="audio/theme-song.mp3" loop></audio>
+  <audio id="soundClickX" src="audio/click-x.mp3"></audio>
+  <audio id="soundClickO" src="audio/click-o.mp3"></audio>
+  <audio id="soundWin" src="audio/win.mp3"></audio>
+
+  <script>
+    const statusText = document.getElementById("status");
+    const soundClickX = document.getElementById("soundClickX");
+    const soundClickO = document.getElementById("soundClickO");
+    const soundWin = document.getElementById("soundWin");
+    const themeSong = document.getElementById("themeSong");
+    const volumeSlider = document.getElementById("volumeSlider");
+    const volumeControl = document.getElementById("volumeControl");
+    let currentPlayer = "X";
+    let gameBoard = ["", "", "", "", "", "", "", "", ""];
+    let isGameOver = false;
+    let isThemeSongPlaying = false;
+
+    // Audio availability check
+    function checkAudioAvailability(audio, fileName) {
+      audio.onerror = () => {
+        console.error(`${fileName} failed to load`);
+        statusText.textContent = `Error: ${fileName} not found. Check audio files.`;
+        setTimeout(() => {
+          statusText.textContent = `Player ${currentPlayer}'s turn`;
+        }, 3000);
+      };
+    }
+
+    checkAudioAvailability(themeSong, "Theme Song");
+    checkAudioAvailability(soundClickX, "Click X Sound");
+    checkAudioAvailability(soundClickO, "Click O Sound");
+    checkAudioAvailability(soundWin, "Win Sound");
+
+    // Volume control
+    themeSong.volume = volumeSlider.value;
+    volumeSlider.addEventListener("input", () => {
+      themeSong.volume = volumeSlider.value;
+      volumeSlider.style.setProperty("--value", volumeSlider.value);
+      volumeSlider.setAttribute("aria-valuenow", Math.round(volumeSlider.value * 100));
+    });
+
+    const winCombos = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+
+    function startGame() {
+      const name = document.getElementById("username").value;
+      if (!name.trim()) {
+        alert("Please enter a name!");
+        return;
+      }
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("gameContainer").style.display = "block";
+      renderBoard();
+      if (!isThemeSongPlaying) {
+        toggleThemeSong();
+      }
+    }
+
+    function toggleThemeSong() {
+      if (isThemeSongPlaying) {
+        themeSong.pause();
+        isThemeSongPlaying = false;
+        volumeControl.style.display = "none";
+      } else {
+        themeSong.loop = true;
+        themeSong.play().catch(() => {
+          console.error("Theme song blocked or not found");
+          statusText.textContent = "Audio unavailable. Please check files.";
+          setTimeout(() => {
+            statusText.textContent = `Player ${currentPlayer}'s turn`;
+          }, 2000);
+        });
+        isThemeSongPlaying = true;
+        volumeControl.style.display = "flex";
+      }
+    }
+
+    function playClickSound(player) {
+      if (player === "X") {
+        soundClickX.play().catch(() => console.error("Click X sound unavailable"));
+      } else {
+        soundClickO.play().catch(() => console.error("Click O sound unavailable"));
+      }
+    }
+
+    function playWinSound() {
+      soundWin.play().catch(() => console.error("Win sound unavailable"));
+    }
+
+    function renderBoard() {
+      const boardElement = document.getElementById("board");
+      boardElement.innerHTML = "";
+      gameBoard.forEach((cell, index) => {
+        const cellElement = document.createElement("div");
+        cellElement.classList.add("cell");
+        cellElement.dataset.index = index;
+        cellElement.textContent = cell;
+        cellElement.setAttribute("role", "gridcell");
+        cellElement.setAttribute("aria-label", `Cell ${index + 1}, ${cell || "empty"}`);
+        cellElement.addEventListener("click", handleClick);
+        boardElement.appendChild(cellElement);
+      });
+    }
+
+    function checkWin() {
+      for (let combo of winCombos) {
+        const [a, b, c] = combo;
+        if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+          isGameOver = true;
+          statusText.textContent = `🎉 Player ${gameBoard[a]} wins!`;
+          playWinSound();
+          highlightWinningCells([a, b, c]);
+          return true;
+        }
+      }
+      if (!gameBoard.includes("")) {
+        isGameOver = true;
+        statusText.textContent = "It's a draw!";
+        return false;
+      }
+      return false;
+    }
+
+    function highlightWinningCells(combo) {
+      combo.forEach(index => {
+        const cell = document.querySelector(`[data-index="${index}"]`);
+        cell.classList.add("winning");
+        cell.setAttribute("aria-label", `Winning cell ${index + 1}, ${gameBoard[index]}`);
+      });
+    }
+
+    function findBestMove() {
+      for (let combo of winCombos) {
+        const [a, b, c] = combo;
+        if (gameBoard[a] === "O" && gameBoard[a] === gameBoard[b] && gameBoard[c] === "") return c;
+        if (gameBoard[a] === "O" && gameBoard[a] === gameBoard[c] && gameBoard[b] === "") return b;
+        if (gameBoard[b] === "O" && gameBoard[b] === gameBoard[c] && gameBoard[a] === "") return a;
+      }
+      for (let combo of winCombos) {
+        const [a, b, c] = combo;
+        if (gameBoard[a] === "X" && gameBoard[a] === gameBoard[b] && gameBoard[c] === "") return c;
+        if (gameBoard[a] === "X" && gameBoard[a] === gameBoard[c] && gameBoard[b] === "") return b;
+        if (gameBoard[b] === "X" && gameBoard[b] === gameBoard[c] && gameBoard[a] === "") return a;
+      }
+      if (gameBoard[4] === "") return 4;
+      const corners = [0, 2, 6, 8].filter(i => gameBoard[i] === "");
+      if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
+      const sides = [1, 3, 5, 7].filter(i => gameBoard[i] === "");
+      if (sides.length > 0) return sides[Math.floor(Math.random() * sides.length)];
+      return null;
+    }
+
+    function cpuMove() {
+      if (isGameOver) return;
+      const move = findBestMove();
+      if (move !== null) {
+        gameBoard[move] = "O";
+        const cell = document.querySelector(`[data-index="${move}"]`);
+        cell.textContent = "O";
+        cell.setAttribute("aria-label", `Cell ${move + 1}, O`);
+        playClickSound("O");
+        checkWin();
+        if (!isGameOver) {
+          currentPlayer = "X";
+          statusText.textContent = `Player X's turn`;
+        }
+      }
+    }
+
+    function handleClick(e) {
+      const index = e.target.dataset.index;
+      if (gameBoard[index] !== "" || isGameOver) return;
+      gameBoard[index] = currentPlayer;
+      e.target.textContent = currentPlayer;
+      e.target.setAttribute("aria-label", `Cell ${parseInt(index) + 1}, ${currentPlayer}`);
+      playClickSound(currentPlayer);
+      if (!checkWin()) {
+        if (document.getElementById("mode").value === "cpu" && currentPlayer === "X") {
+          currentPlayer = "O";
+          statusText.textContent = `Computer's turn`;
+          setTimeout(cpuMove, 500);
+        } else {
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+          statusText.textContent = `Player ${currentPlayer}'s turn`;
+        }
+      }
+    }
+
+    function restartGame() {
+      gameBoard = ["", "", "", "", "", "", "", "", ""];
+      isGameOver = false;
+      currentPlayer = "X";
+      statusText.textContent = "Player X's turn";
+      renderBoard();
+      if (isThemeSongPlaying && themeSong.paused) {
+        themeSong.loop = true;
+        themeSong.play().catch(() => console.error("Theme song unavailable during restart"));
+      }
+    }
+
+    function changeTheme(theme) {
+      const volumeSlider = document.getElementById("volumeSlider");
+      if (theme === "classic") {
+        document.body.style.backgroundColor = "#fff";
+        document.body.style.color = "#000";
+        document.body.classList.add("classic-theme");
+        document.querySelectorAll(".cell").forEach(cell => {
+          cell.style.backgroundColor = "#ccc";
+          cell.style.color = "#000";
+          cell.style.border = "2px solid #000";
+          cell.style.boxShadow = "none";
+        });
+      } else {
+        document.body.style.backgroundColor = "#0d0d0d";
+        document.body.style.color = "#00ffea";
+        document.body.classList.remove("classic-theme");
+        document.querySelectorAll(".cell").forEach(cell => {
+          cell.style.backgroundColor = "#1a1a1a";
+          cell.style.color = "#00ffea";
+          cell.style.border = "2px solid #00ffea";
+          cell.style.boxShadow = "0 0 10px #00ffea";
+        });
+      }
+    }
+
+    // Initialize volume control visibility
+    volumeControl.style.display = "none";
+    renderBoard();
+  </script>
+</body>
+</html>
